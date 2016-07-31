@@ -27,6 +27,7 @@ byte overRun = EEPROM.read(1);
 #define L2          7
 
 #define M           8
+#define Lamp        9
 
 #define P1          24
 #define P2A         25
@@ -70,6 +71,7 @@ void setup() {
   pinMode(L2,       OUTPUT); // L2 mitschalten!
 
   pinMode(M,        OUTPUT); // Magnetschloss
+  pinMode(Lamp,     OUTPUT); // Lampe
 
   pinMode(P1,       INPUT); //Signal oben
   pinMode(P2A,      INPUT); //Signal mitte a
@@ -77,15 +79,15 @@ void setup() {
   pinMode(P3,       INPUT); //Signal unten
   pinMode(P4,       INPUT); //Signal Turm 2
 
-  pinMode(green,       INPUT); //Taster gruen
-  pinMode(red,       INPUT); //Taster rot
-  pinMode(blue,       INPUT); //Taster blau
+  pinMode(green,    INPUT); //Taster gruen
+  pinMode(red,      INPUT); //Taster rot
+  pinMode(blue,     INPUT); //Taster blau
 
   pinMode(S1,       INPUT); //Klappe oben
   pinMode(S2,       INPUT); //Klappe unten
 
-  pinMode(ledR,     OUTPUT);
-  pinMode(ledG,     OUTPUT);
+  pinMode(ledR,     OUTPUT); //LED
+  pinMode(ledG,     OUTPUT); //LED
 
 
   //Relais werden auf HIGH geschaltet
@@ -106,9 +108,9 @@ void setup() {
   digitalWrite(P3,        HIGH);
   digitalWrite(P4,        HIGH);
 
-  digitalWrite(green,      HIGH);
-  digitalWrite(red,        HIGH);
-  digitalWrite(blue,       HIGH);
+  digitalWrite(green      HIGH);
+  digitalWrite(red,       HIGH);
+  digitalWrite(blue,      HIGH);
 
   digitalWrite(S1,        HIGH);
   digitalWrite(S2,        HIGH);
@@ -121,7 +123,7 @@ void setup() {
   //Nachdem das System gestartet wurde, blinkt die rote LED 5 mal.
   //Wird green und red gedrueckt, bevor die gruene LED blinkt, startet der Manuelle modus "mLoop()"
   //er kann nur durch neustart verlassen werden
-  if ((buttonPressed(green) == 0) &&  signalRead(P4) == 0) {
+  if ((buttonPressed(green) == 0) &&  buttonPressed(red) == 0) {
     digitalWrite(ledR,    HIGH);
     digitalWrite(ledG,    HIGH);
     delay(1200);
@@ -137,7 +139,7 @@ void loop() {
   safty();
 
   //fahert von unten nach oben entlaed und fahert wieder runter
-  if (buttonPressed(green) && signalRead(P4) == 1 && safty()) {
+  if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
     delay(200); // Knopf muss 200ms gedrückt sein
     if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
       startTime = millis(); //Laufzeit berechnung
@@ -162,6 +164,7 @@ void loop() {
       bonnie();
     }
   }
+  
 }
 // Manuelle Steuerung. Nur P1 und P2 werden ueberwacht, magnetschloss offen
 void mLoop() {
@@ -232,4 +235,3 @@ void printSensor() {
   delay(800);
 
 }
-
