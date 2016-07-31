@@ -48,7 +48,32 @@ void my(int x) {
     currentTime = millis() - startTime;
     goUp();
     if (isMid()) {
-    digitalWrite(M, LOW); // Magnetschkoss oeffnen
+      digitalWrite(M, LOW); // Magnetschkoss oeffnen
     }
   }
 }
+
+//Tests
+
+//void testBonnie() {
+//    while (digitalRead(P1) == 0 && digitalRead(P4) == 1 &&
+//           safty()) {
+//      currentTime = millis() - startTime;
+//      goUp();
+//    }
+//    off();
+//    delay(3000);
+//    my2(9000);
+//  }
+//
+//void my2(int x) {
+//  while (isMid() == false && signalRead(P3) == 0 &&
+//         safty() && maxRunTime(x)) {
+//    currentTime = millis() - startTime;
+//    goDown();
+//         }
+//         off();
+//    if (isMid()) {
+//      digitalWrite(M, LOW); // Magnetschloss oeffnen
+//    }
+//  }
