@@ -105,8 +105,8 @@ void setup() {
   digitalWrite(Lamp,      HIGH);
 
   //umschaltung von L1 & L2 auf LOW ( spannung fällt ab)
-  digitalWrite(L1,        LOW);
-  digitalWrite(L2,        LOW);
+  digitalWrite(L1,        HIGH);
+  digitalWrite(L2,        HIGH);
 
   //interner pullUp resitor fuer alle read pins
   digitalWrite(P1,        HIGH);
@@ -127,7 +127,7 @@ void setup() {
   digitalWrite(ledG,      LOW);
 
   //Start sequenz
-
+  printSensor();
   blinkGreen(5, 300);
 
   //Nachdem das System gestartet wurde, blinkt die rote LED 5 mal.
@@ -157,10 +157,11 @@ void loop() {
       delay(3000); // Kiste rutscht vom Aufzug -- hoffentlich!
       startTime = millis(); //time reset
       back(16000);
+    } else if (signalRead(P4) == 0) {
+      blinkGreen(4 , 150); //zeigt an, dass eine Kiste oben entladen werden muss.
     }
-  } else if (signalRead(P4) == 0) {
-    blinkGreen(4 , 150); //zeigt an, dass eine Kiste oben entladen werden muss.
   }
+  
   //fahert so lange nach unten wie es geht
   if (buttonPressed(red) == 0  && safty()) {
     delay(120);
@@ -179,59 +180,7 @@ void loop() {
   }
 
 }
-// Manuelle Steuerung. Nur P1 und P2 werden ueberwacht, magnetschloss offen
-// Kann befehle Seriell lesen
-void mLoop() {
-  digitalWrite(Lock, LOW); // Magnetschkoss oeffnen
-  while (true) {
-    //gruen faehrt hoch
-    if ((buttonPressed(green) == 0) && (signalRead(P1) == 0)) {
-      while ((buttonPressed(green) == 0) && (signalRead(P1) == 0)) {
-        goUp();
-      }
-      off();
-    }
-    //rot runter
-    if ((buttonPressed(red) == 0) && (signalRead(P3) == 0)) {
-      while ((buttonPressed(red) == 0) && (signalRead(P3) == 0)) {
-        goDown();
-      }
-      off();
-    }
 
-    //blue und red resetten den Errorspeicher
-    if (buttonPressed(blue) == 0) {
-      delay(400);
-      if (buttonPressed(blue) == 0) {
-        overRun = 0;
-        blinkGreen(5, 70);
-        EEPROM.update(1, overRun);
-      }
-    }
-  }
-  {
-
-    if (Serial.available() > 0) //"wenn ein Datenpaket geliefert wird"
-    {
-      data = Serial.read(); //liest die Daten
-
-      if (data == '1') {
-        goUp();
-        delay(300);
-        off();
-      }
-      if (data == '2') {
-        goDown();
-        delay(300);
-        off();
-      }
-      if (data == '3') {
-        printSensor();
-      }
-      Serial.flush(); //seriellen Puffer löschen
-    }
-  }
-}
 
 //Auslesung der Sensoren
 void printSensor() {
@@ -261,5 +210,7 @@ void printSensor() {
   Serial.print("S2: ");
   Serial.println(signalRead(S2));
   Serial.println(" ");
+  Serial.print("Fehlerspeicher: ");
+  Serial.println(EEPROM.read(1));
   delay(800);
 }

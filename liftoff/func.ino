@@ -39,14 +39,15 @@ boolean emergencyStop(){
 //Das Errorflag wird auf EEPROMM (1,1) gespeichert und muss quittiert werden.
 //maxRunTime Wert (x) darf nicht kleiner 0 sein
 boolean maxRunTime(int x) {
-  if ((millis() - startTime) > x && EEPROM.read(1) == 0) {
-    off();
-    overRun = 1;
-    //EEPROM.write(1, overRun);
-    blinkRed(200, 60); // <><><><><><<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> bedienungsanleitung!
-    return false;
-  }
-  else return true;
+//  if ((millis()- startTime) > x && EEPROM.read(1) == 0) {
+//    off();
+//    overRun = 1;
+//    //EEPROM.write(1, overRun);
+//    blinkRed(200, 60); // <><><><><><<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> bedienungsanleitung!
+//    return false;
+//  }
+//  else return true;
+return true;
 }
 
 
