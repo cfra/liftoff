@@ -1,11 +1,11 @@
 //Motorenbefehle
 //goUp und goDown
 void goUp() {
-  if (signalRead(P1) != 1) {
-    digitalWrite(L1,    HIGH);
-    digitalWrite(L2,    HIGH);
-    digitalWrite(up,    LOW);
-    digitalWrite(upSR,  LOW);
+  if (signalRead(P1)  != 1) {
+    digitalWrite(L1,      HIGH);
+    digitalWrite(L2,      HIGH);
+    digitalWrite(up,      LOW);
+    digitalWrite(upSR,    LOW);
     digitalWrite(Lamp,    LOW); //Lampe ein
   }
   else {

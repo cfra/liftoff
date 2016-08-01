@@ -11,8 +11,7 @@
 //Schaltet jeweils 2 Relais fuer hoch oder runter und die Relais fuer L1 und L2.
 
 #include <EEPROM.h>
-float counter = EEPROM.read(0);
-byte overRun = EEPROM.read(1);
+
 
 //      pinName     pinNumber
 
@@ -49,18 +48,21 @@ byte overRun = EEPROM.read(1);
 #define buttonPressed(a) (digitalRead(a))
 #define signalRead(a) (digitalRead(a))
 
+char data = ' '; //Serieller char
+
 
 //Timervariablen
-long startTime =    0;
-long currentTime =  0;
-long saftyStauts =  0;
+int startTime =    0;
+int currentTime =  0;
+int saftyStauts =  0;
+int counter = EEPROM.read(0);
+byte overRun = EEPROM.read(1); //Error durch Zeitausloesung
+byte P4activated = 0;
 
 void setup() {
 
   Serial.begin(9600); //Uebertragung mit 9600kBits
-
-  Serial.println("Overrun: ");
-  Serial.println(EEPROM.read(1));
+  Serial.println(EEPROM.read(1)); // Fehlerspeicher
 
   pinMode(up,       OUTPUT); //Aufzug faehrt hoch
   pinMode(upSR,     OUTPUT);
@@ -108,7 +110,7 @@ void setup() {
   digitalWrite(P3,        HIGH);
   digitalWrite(P4,        HIGH);
 
-  digitalWrite(green      HIGH);
+  digitalWrite(green,     HIGH);
   digitalWrite(red,       HIGH);
   digitalWrite(blue,      HIGH);
 
@@ -140,17 +142,17 @@ void loop() {
 
   //fahert von unten nach oben entlaed und fahert wieder runter
   if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
-    delay(200); // Knopf muss 200ms gedrückt sein
+    delay(120); // Knopf muss xms gedrückt sein
     if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
       startTime = millis(); //Laufzeit berechnung
       bring(16000);
     }
   } else if (signalRead(P4) == 0) {
-    blinkGreen(4 , 200); //zeigt an, dass eine Kiste oben entladen werden muss.
+    blinkGreen(4 , 150); //zeigt an, dass eine Kiste oben entladen werden muss.
   }
   //fahert so lange nach unten wie es geht
   if (buttonPressed(red) == 0  && safty()) {
-    delay(200); // Knopf muss 200ms gedrückt sein
+    delay(120);
     if (buttonPressed(red) == 0  && safty()) {
       startTime = millis();
       back(16000);
@@ -158,15 +160,16 @@ void loop() {
   }
   //fahert von der mitte nach unten oder von unten in die mitte
   if (buttonPressed(blue) == 0  && safty()) {
-    delay(200); // Knopf muss 200ms gedrückt sein
+    delay(120);
     if (buttonPressed(blue) == 0  && safty()) {
       startTime = millis();
       bonnie();
     }
   }
-  
+
 }
 // Manuelle Steuerung. Nur P1 und P2 werden ueberwacht, magnetschloss offen
+// Kann befehle Seriell lesen
 void mLoop() {
   digitalWrite(M, LOW); // Magnetschkoss oeffnen
   while (true) {
@@ -193,6 +196,28 @@ void mLoop() {
         blinkGreen(5, 70);
         EEPROM.update(1, overRun);
       }
+    }
+  }
+  {
+
+    if (Serial.available() > 0) //"wenn ein Datenpaket geliefert wird"
+    {
+      data = Serial.read(); //liest die Daten
+
+      if (data == '1') {
+        goUp();
+        delay(300);
+        off();
+      }
+      if (data == '2') {
+        goDown();
+        delay(300);
+        off();
+      }
+       if (data == '3') {
+           printSensor();
+       }
+      Serial.flush(); //seriellen Puffer löschen
     }
   }
 }

@@ -1,12 +1,13 @@
 //Aktiviert durch green, bringt der Aufzug eine Kiste BIER nach oben, nahc der entladung (3 sekunden spaeter) begibt der Aufzug sich in den Keller
 void bring(int x) {
-  if (digitalRead(P4) == 0) {
+  if (digitalRead(P4) == 0 ) {
     blinkGreen(3, 200); //// <><><><><><><><><><><><><><><><><><><><><><><><><><><><> bedienungsanleitung!
   }
   else {
+    currentTime = millis() - startTime;
     while (digitalRead(P1) == 0 && digitalRead(P4) == 1 &&
            safty() && maxRunTime(x)) {
-      currentTime = millis() - startTime;
+      
       goUp();
     }
     off();
@@ -17,8 +18,9 @@ void bring(int x) {
 }
 //Aktiviert durch red faehrt den Aufzug nach unten zu P3
 void back(int x) {
+  currentTime = millis() - startTime;
   while (digitalRead(P3) == 0 && safty() && maxRunTime(x) ) {
-    currentTime = millis() - startTime;
+    
     goDown();
   }
   off();
