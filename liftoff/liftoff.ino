@@ -25,7 +25,7 @@
 #define L1          6
 #define L2          7
 
-#define M           8
+#define Lock        8
 #define Lamp        9
 
 #define P1          24
@@ -41,6 +41,8 @@
 
 #define S1          36
 #define S2          37
+
+#define N1          40
 
 #define ledR        10
 #define ledG        11
@@ -72,7 +74,7 @@ void setup() {
   pinMode(L1,       OUTPUT); // L1
   pinMode(L2,       OUTPUT); // L2 mitschalten!
 
-  pinMode(M,        OUTPUT); // Magnetschloss
+  pinMode(Lock,     OUTPUT); // Magnetschloss
   pinMode(Lamp,     OUTPUT); // Lampe
 
   pinMode(P1,       INPUT); //Signal oben
@@ -88,6 +90,8 @@ void setup() {
   pinMode(S1,       INPUT); //Klappe oben
   pinMode(S2,       INPUT); //Klappe unten
 
+  pinMode(N1,       INPUT); //Notaus ueberwachung
+
   pinMode(ledR,     OUTPUT); //LED
   pinMode(ledG,     OUTPUT); //LED
 
@@ -97,7 +101,8 @@ void setup() {
   digitalWrite(upSR,      HIGH);
   digitalWrite(down,      HIGH);
   digitalWrite(downSR,    HIGH);
-  digitalWrite(M,         HIGH);
+  digitalWrite(Lock,      HIGH);
+  digitalWrite(Lamp,      HIGH);
 
   //umschaltung von L1 & L2 auf LOW ( spannung fällt ab)
   digitalWrite(L1,        LOW);
@@ -116,11 +121,14 @@ void setup() {
 
   digitalWrite(S1,        HIGH);
   digitalWrite(S2,        HIGH);
+  digitalWrite(N1,        HIGH);
 
   digitalWrite(ledR,      LOW);
   digitalWrite(ledG,      LOW);
-  blinkGreen(5, 300);
 
+  //Start sequenz
+
+  blinkGreen(5, 300);
 
   //Nachdem das System gestartet wurde, blinkt die rote LED 5 mal.
   //Wird green und red gedrueckt, bevor die gruene LED blinkt, startet der Manuelle modus "mLoop()"
@@ -146,6 +154,9 @@ void loop() {
     if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
       startTime = millis(); //Laufzeit berechnung
       bring(16000);
+      delay(3000); // Kiste rutscht vom Aufzug -- hoffentlich!
+      startTime = millis(); //time reset
+      back(16000);
     }
   } else if (signalRead(P4) == 0) {
     blinkGreen(4 , 150); //zeigt an, dass eine Kiste oben entladen werden muss.
@@ -171,7 +182,7 @@ void loop() {
 // Manuelle Steuerung. Nur P1 und P2 werden ueberwacht, magnetschloss offen
 // Kann befehle Seriell lesen
 void mLoop() {
-  digitalWrite(M, LOW); // Magnetschkoss oeffnen
+  digitalWrite(Lock, LOW); // Magnetschkoss oeffnen
   while (true) {
     //gruen faehrt hoch
     if ((buttonPressed(green) == 0) && (signalRead(P1) == 0)) {
@@ -214,20 +225,13 @@ void mLoop() {
         delay(300);
         off();
       }
-       if (data == '3') {
-           printSensor();
-       }
+      if (data == '3') {
+        printSensor();
+      }
       Serial.flush(); //seriellen Puffer löschen
     }
   }
 }
-
-
-
-
-
-
-
 
 //Auslesung der Sensoren
 void printSensor() {
@@ -258,5 +262,4 @@ void printSensor() {
   Serial.println(signalRead(S2));
   Serial.println(" ");
   delay(800);
-
 }

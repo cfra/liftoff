@@ -2,10 +2,10 @@
 //isMid ueberprueft ob der Aufzug sich in der mittleren Posititon befindet, und schaltet ggf. das Magnetschloss
 boolean isMid() {
   if (digitalRead(P2A) == 0) {
-    digitalWrite(M ,  HIGH);
+    digitalWrite(Lock ,  HIGH);
     return false;
   } else if (digitalRead(P2A) == 1) {
-    digitalWrite(M,   LOW);
+    digitalWrite(Lock,   LOW);
     return true;
   }
 }
@@ -27,6 +27,13 @@ boolean safty() {
   }
 
 }
+boolean emergencyStop(){
+  if (digitalRead(N1) == 1){
+    return false;
+  }
+  else return true;
+}
+
 
 //Die 4 Programme der Knoepfe liefern einen maximalen maxRunTime Wert (x), wird dieser überschritten, schaltet das system ab.
 //Das Errorflag wird auf EEPROMM (1,1) gespeichert und muss quittiert werden.
@@ -72,4 +79,3 @@ int timer1 = 0;
 int timer2 = 0;
 
 }
-
