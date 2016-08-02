@@ -50,30 +50,6 @@ boolean maxRunTime(int x) {
 return true;
 }
 
-
-//led blink x Wiederholung, y milliseconds
-void blinkGreen(int x, int y) {
-  int c = 0;
-  while (c < x) {
-    digitalWrite(ledG, HIGH);
-    delay(y);
-    digitalWrite(ledG, LOW);
-    delay(y);
-    c++;
-  }
-}
-
-void blinkRed(int x, int y) {
-  int c = 0;
-  while (c < x) {
-    digitalWrite(ledR, HIGH);
-    delay(y);
-    digitalWrite(ledR, LOW);
-    delay(y);
-    c++;
-  }
-}
-
 void timeFunction(int x){
 
 int timer1 = 0;

@@ -21,12 +21,14 @@
 #define up          5
 #define upSR        4
 
-
 #define L1          6
 #define L2          7
 
 #define Lock        8
 #define Lamp        9
+
+#define ledR        10
+#define ledG        11
 
 #define P1          24
 #define P2A         25
@@ -44,8 +46,6 @@
 
 #define N1          40
 
-#define ledR        10
-#define ledG        11
 
 #define buttonPressed(a) (digitalRead(a))
 #define signalRead(a) (digitalRead(a))
@@ -129,6 +129,7 @@ void setup() {
   //Start sequenz
   printSensor();
   blinkGreen(5, 300);
+//  mLoop();
 
   //Nachdem das System gestartet wurde, blinkt die rote LED 5 mal.
   //Wird green und red gedrueckt, bevor die gruene LED blinkt, startet der Manuelle modus "mLoop()"
@@ -138,7 +139,7 @@ void setup() {
     digitalWrite(ledG,    HIGH);
     delay(1200);
     digitalWrite(ledR,    LOW);
-    mLoop();
+
   }
   blinkRed(5, 200);
 }
@@ -171,14 +172,21 @@ void loop() {
     }
   }
   //fahert von der mitte nach unten oder von unten in die mitte
-  if (buttonPressed(blue) == 0  && safty()) {
+//  if (buttonPressed(blue) == 0  && safty()) {
+//    delay(120);
+//    if (buttonPressed(blue) == 0  && safty()) {
+//      startTime = millis();
+//      bonnie();
+//    }
+//  }
+
+if (buttonPressed(blue) == 0  && safty()) {
     delay(120);
     if (buttonPressed(blue) == 0  && safty()) {
       startTime = millis();
-      bonnie();
+      testBonnie();
     }
   }
-
 }
 
 

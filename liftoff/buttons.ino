@@ -1,22 +1,22 @@
 //Aktiviert durch green, bringt der Aufzug eine Kiste BIER nach oben, nahc der entladung (3 sekunden spaeter) begibt der Aufzug sich in den Keller
 void bring(int x) {
-  if (digitalRead(P4) == 0 || digitalRead(P1 == 1)) {
+  if (digitalRead(P4) == 0) {
     blinkGreen(3, 200); //// <><><><><><><><><><><><><><><><><><><><><><><><><><><><> bedienungsanleitung!
   }
   else {
     currentTime = millis() - startTime;
     while (digitalRead(P1) == 0 && digitalRead(P4) == 1 &&
-           safty() && maxRunTime(x)) {      
+           safty() && maxRunTime(x)) {
       goUp();
     }
-    off();    
+    off();
   }
 }
 //Aktiviert durch red faehrt den Aufzug nach unten zu P3
 void back(int x) {
   currentTime = millis() - startTime;
   while (digitalRead(P3) == 0 && safty() && maxRunTime(x) ) {
-    
+
     goDown();
   }
   off();
@@ -53,25 +53,16 @@ void my(int x) {
 
 //Tests
 
-//void testBonnie() {
-//    while (digitalRead(P1) == 0 && digitalRead(P4) == 1 &&
-//           safty()) {
-//      currentTime = millis() - startTime;
-//      goUp();
-//    }
-//    off();
-//    delay(3000);
-//    my2(9000);
-//  }
-//
-//void my2(int x) {
-//  while (isMid() == false && signalRead(P3) == 0 &&
-//         safty() && maxRunTime(x)) {
-//    currentTime = millis() - startTime;
-//    goDown();
-//         }
-//         off();
-//    if (isMid()) {
-//      digitalWrite(Lock, LOW); // Magnetschloss oeffnen
-//    }
-//  }
+void testBonnie() {
+  isMid();
+  bring(9000);
+  delay(3000);
+  while (isMid() == false && digitalRead(P3) == 0 &&
+         safty()) {
+    goDown();
+  }
+  off();
+  isMid();
+}
+
+
