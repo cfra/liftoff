@@ -54,7 +54,11 @@ S2				37				Reed-Kontakt		Turm 1 schliessen		Klappe Keller
 N1				40				Notaus Relais		Notausueberwachung		Ueberwacht ob der Notaus betätigt wurde
 
 
-Funktionen		Ausloesung				Aktion						Signale
+Funktionen		Ausloesung				Aktion						
+
+goDown()		T2, T3					Relais schalten, Lampe ein	down,downSR,L1,L2,P3,Lamp
+goUp()			T1, T3					Relais schalten, Lampe ein	up,upSR,L1,L2,P1, Lamp
+off()			P1,P2A,P3, P4			Relais schalten, Lampe aus	up,upSR,down,downSR,L1,L2,Lamp
 
 bring(x)		Gestartet durch T1		der Aufzug faehrt hoch 		P1, P4
 back(x)			Gestartet durch T2,T3 	der Aufzug faehrt runter	P3
@@ -63,17 +67,55 @@ bonnie(x)		Gestartet durch T3	 	der Aufzug faehrt runter 	P3
 
 safty()			main loop				ueberwachung der Klappen	S1,S2
 isMid()			my(x), bonnie(x)		Magnetschloss schalten		P2A
-maxRuntime(x)	T1,T2,T3				Laufzeit berechnung			P1,P2A,P3,
+maxRuntime(x)	T1,T2,T3				Laufzeit berechnung			Int x, P1,P2A,P3,
 emergencyStop()	main loop				Notausueberwachung			N1
 			
-goUp()			T1, T3					Relais schalten, Lampe ein	up,upSR,L1,L2,P1, Lamp
-goDown()		T2, T3					Relais schalten, Lampe ein	down,downSR,L1,L2,P3,Lamp			
-off()			P1,P2A,P3, P4			Relais schalten, Lampe aus	up,upSR,down,downSR,L1,L2,Lamp
 
 
-Die beiden Taster T1 und T2 starten die jeweiligen Befehle.
 Die safty funktion stellt sicher, dass sich der Aufzug nicht bewegt und bricht den letzten Befehl ab.
 Es gibt 2 Status LED's rot und gruen. Auf grün ist der Fahrstuhl betriebsbereit, auf rot ist eine der beiden Klappen geoeffnet.
-Die Pins 2 und 3 muessen am Relais angeschlossen werden. Sie steuern den Motor.
-P Sind die Signale an den Türmen, T sind die Taster, S für die Safty Klappen
+
+
+
+goDown()					
+goUp()
+off()	
+
+goDown und goDown schalten die Richtung des Motors, sollten P1 oder P3 nicht betaetigt sein.
+Setzt sich der Aufzug in bewegung, wird zusaetzlich die Lampe unter dem Aufzug angeschaltet.
+
+off schaltet alle Relais fuer die Motorensteuerung und die Lampe aus, und resettet die runtime.
+
+bring(x)
+
+bring wird durch den gruenen Taster im Keller gestartet und
+faehrt den Aufzug nach oben, dabei entlaed er sich an P1.
+
+Nach 3 sekunden startet die Funktion back().
+
+bring laueft solange
+bis
+		P1 					== false
+		P4 					== true
+		safty() 			== true
+		maxRuntime()		== true
+		emergencyStop() 	== false
+		
+
+
+back(x)			
+ Wird durch den roten Schalter im Keller gestartet.
+	Ist bestandteil der Funktionen bonnie() und bring()
+
+my(x)			Gestartet durch T3 		der Aufzug faehrt hoch 		P2A
+bonnie(x)		Gestartet durch T3	 	der Aufzug faehrt runter 	P3
+
+safty()			main loop				ueberwachung der Klappen	S1,S2
+isMid()			my(x), bonnie(x)		Magnetschloss schalten		P2A
+maxRuntime(x)	T1,T2,T3				Laufzeit berechnung			P1,P2A,P3,
+emergencyStop()	main loop				Notausueberwachung			N1
+
+
+
+
 
