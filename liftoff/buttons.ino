@@ -1,7 +1,7 @@
 //Aktiviert durch green, bringt der Aufzug eine Kiste BIER nach oben, nahc der entladung (3 sekunden spaeter) begibt der Aufzug sich in den Keller
 void bring(int x) {
   if (digitalRead(P4) == 0) {
-    blinkGreen(3, 200); //// <><><><><><><><><><><><><><><><><><><><><><><><><><><><> bedienungsanleitung!
+    blinkGreen(3, 200); //// 
   }
   else {
     currentTime = millis() - startTime;

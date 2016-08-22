@@ -4,10 +4,11 @@
 
 Beschreibung                        Code                              Behebung
   
-Alles ok                      gruene LED      leuchtet                /
-Klappe geoeffnet              rote LED        leuchtet                Klappe schliessen
-Kiste enladen                 gGruene LED     blinkt langsam.         Kiste entladen
+Bereit                        gruene LED      leuchtet                /
+Klappe geoeffnet              rote LED        blinkt langsan          Klappe schliessen
+Kiste enladen                 gruene LED      blinkt langsam          Kiste entladen
 Zeitueberschreitung           rote LED        blinkt schnell          Techniker rufen
+
 */
 
 

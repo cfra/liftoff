@@ -104,17 +104,33 @@ bis
 
 
 back(x)			
- Wird durch den roten Schalter im Keller gestartet.
-	Ist bestandteil der Funktionen bonnie() und bring()
+ Wird durch den roten Schalter im Keller gestartet und den blauen an der Bar.
+	Ist bestandteil der Funktionen bonnie() und bring().
+	
+	laueft solange bis P3 == false
 
-my(x)			Gestartet durch T3 		der Aufzug faehrt hoch 		P2A
-bonnie(x)		Gestartet durch T3	 	der Aufzug faehrt runter 	P3
+my(x)
 
-safty()			main loop				ueberwachung der Klappen	S1,S2
-isMid()			my(x), bonnie(x)		Magnetschloss schalten		P2A
-maxRuntime(x)	T1,T2,T3				Laufzeit berechnung			P1,P2A,P3,
-emergencyStop()	main loop				Notausueberwachung			N1
+wird durch die Funktion bonnie(x) gestartet
 
+bonnie(x)		
+wird durch den blauen Schalter an der Bar gestartet
+ist isMid() == true fahert der Aufzug in den Keller und verriegelt das Magnetschloss
+ist isMid() == false fahert der Aufzug vom Keller zur Bar und entriegelt das Magnetschloss
+
+safty()
+laueft immer in der Mainloop und in jeder der 4 Funktion zur Ansteuerung,
+sollte eine Klappe geoeffent werden, stoppt das Programm sofort und der Aufzug wird angehalten.
+
+isMid()
+der Schalter P2A im Turm auf hoehe der Bar ueberprueft ob sich der Aufzug in der Mitte befindet
+
+maxRuntime(x)
+jede Funktion zur Bewegungssteuerung hat einen maximalen Laufzeitwer (maxRuntime) wird dieser ueberschritten,
+stoppt der Aufzug und kann nur im debug modus resettet werden.
+
+emergencyStop()
+wird der Notausknopf betaetigt, stoppt jede laufendene Funktion (bring back my bonnie)
 
 
 
