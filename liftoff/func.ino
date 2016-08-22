@@ -21,6 +21,7 @@ boolean safty() {
     return true;
   }
   else {
+    digitalWrite(ledG, LOW);
     off();
     blinkRed(1, 200);
     return false;

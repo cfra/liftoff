@@ -172,21 +172,21 @@ void loop() {
     }
   }
   //fahert von der mitte nach unten oder von unten in die mitte
-//  if (buttonPressed(blue) == 0  && safty()) {
-//    delay(120);
-//    if (buttonPressed(blue) == 0  && safty()) {
-//      startTime = millis();
-//      bonnie();
-//    }
-//  }
-
-if (buttonPressed(blue) == 0  && safty()) {
+  if (buttonPressed(blue) == 0  && safty()) {
     delay(120);
     if (buttonPressed(blue) == 0  && safty()) {
       startTime = millis();
-      testBonnie();
+      bonnie();
     }
   }
+  //Test
+//if (buttonPressed(blue) == 0  && safty()) {
+//    delay(120);
+//    if (buttonPressed(blue) == 0  && safty()) {
+//      startTime = millis();
+//      testBonnie();
+//    }
+//  }
 }
 
 
