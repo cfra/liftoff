@@ -15,7 +15,7 @@ boolean isMid() {
 
 boolean safty() {
 
-  if ((signalRead(S1) == 0) && (signalRead(S2) == 0)) {
+  if ((signalRead(S1) == 0)) {  //  && (signalRead(S2) == 0)
     digitalWrite(ledG, HIGH);
     digitalWrite(ledR, LOW);
     return true;
@@ -28,8 +28,8 @@ boolean safty() {
   }
 
 }
-boolean emergencyStop(){
-  if (digitalRead(N1) == 1){
+boolean emergencyStop() {
+  if (digitalRead(N1) == 1) {
     return false;
   }
   else return true;
@@ -40,20 +40,64 @@ boolean emergencyStop(){
 //Das Errorflag wird auf EEPROMM (1,1) gespeichert und muss quittiert werden.
 //maxRunTime Wert (x) darf nicht kleiner 0 sein
 boolean maxRunTime(int x) {
-//  if ((millis()- startTime) > x && EEPROM.read(1) == 0) {
-//    off();
-//    overRun = 1;
-//    //EEPROM.write(1, overRun);
-//    blinkRed(200, 60); // <><><><><><<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> bedienungsanleitung!
-//    return false;
-//  }
-//  else return true;
-return true;
+  //  if ((millis()- startTime) > x && EEPROM.read(1) == 0) {
+  //    off();
+  //    overRun = 1;
+  //    //EEPROM.write(1, overRun);
+  //    blinkRed(200, 60); // <><><><><><<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><> bedienungsanleitung!
+  //    return false;
+  //  }
+  //  else return true;
+  return true;
 }
 
-void timeFunction(int x){
+void timeFunction(int x) {
 
-int timer1 = 0;
-int timer2 = 0;
+  int timer1 = 0;
+  int timer2 = 0;
 
+}
+
+//#define P4_LOW_COUNT 1024
+//void updateP4activated(){
+//
+//static unsigned int p4_low = 0
+//
+//if (digitalRead(P4) == 0) {
+//    if (p4_low < P4_LOW_COUNT)
+//        p4_low++;
+//} else {
+//    p4_low = 0;
+//}
+//if (p4_low == P4_LOW_COUNT)
+//    P4activated = 1;
+
+
+#define BUFFERED_PIN(PIN,SAMPLE_COUNT) \
+  byte PIN##state = -1; \
+  void buffer##PIN() { \
+    static unsigned int state_dur = 0; \
+    static byte last_state = -1; \
+    byte current_state; \
+    \
+    current_state = digitalRead(PIN); \
+    if (current_state != last_state) { \
+      last_state = current_state; \
+      state_dur = 0; \
+    } else { \
+      if (state_dur < SAMPLE_COUNT) { \
+        state_dur++; \
+      } \
+      if (state_dur == SAMPLE_COUNT) { \
+        PIN##state = current_state; \
+      } \
+    } \
+  }
+
+BUFFERED_PIN(P1, 2048);
+BUFFERED_PIN(P4, 2048);
+
+void bufferInputs() {
+  bufferP1();
+  bufferP4();
 }

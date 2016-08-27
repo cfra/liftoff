@@ -61,6 +61,7 @@ int counter = EEPROM.read(0);
 byte overRun = EEPROM.read(1); //Error durch Zeitausloesung
 byte P4activated = 0;
 
+
 void setup() {
 
   Serial.begin(9600); //Uebertragung mit 9600kBits
@@ -101,7 +102,7 @@ void setup() {
   digitalWrite(upSR,      HIGH);
   digitalWrite(down,      HIGH);
   digitalWrite(downSR,    HIGH);
-  digitalWrite(Lock,      HIGH);
+  //digitalWrite(Lock,      HIGH);
   digitalWrite(Lamp,      HIGH);
 
   //umschaltung von L1 & L2 auf LOW ( spannung fällt ab)
@@ -129,7 +130,7 @@ void setup() {
   //Start sequenz
   printSensor();
   blinkGreen(5, 300);
-//  mLoop();
+  //  mLoop();
 
   //Nachdem das System gestartet wurde, blinkt die rote LED 5 mal.
   //Wird green und red gedrueckt, bevor die gruene LED blinkt, startet der Manuelle modus "mLoop()"
@@ -148,7 +149,12 @@ void setup() {
 void loop() {
   //Die klappen werden immer ueberwacht
   safty();
+  bufferInputs();
+  if (P4state == 0) {
+     P4activated = 1;
+  }
 
+  
   //fahert von unten nach oben entlaed und fahert wieder runter
   if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
     delay(120); // Knopf muss xms gedrückt sein
@@ -162,7 +168,7 @@ void loop() {
       blinkGreen(4 , 150); //zeigt an, dass eine Kiste oben entladen werden muss.
     }
   }
-  
+
   //fahert so lange nach unten wie es geht
   if (buttonPressed(red) == 0  && safty()) {
     delay(120);
@@ -171,22 +177,22 @@ void loop() {
       back(16000);
     }
   }
-  //fahert von der mitte nach unten oder von unten in die mitte
-  if (buttonPressed(blue) == 0  && safty()) {
-    delay(120);
-    if (buttonPressed(blue) == 0  && safty()) {
-      startTime = millis();
-      bonnie();
-    }
-  }
+  //  //fahert von der mitte nach unten oder von unten in die mitte
+  //  if (buttonPressed(blue) == 0  && safty()) {
+  //    delay(120);
+  //    if (buttonPressed(blue) == 0  && safty()) {
+  //      startTime = millis();
+  //      bonnie();
+  //    }
+  //  }
   //Test
-//if (buttonPressed(blue) == 0  && safty()) {
-//    delay(120);
-//    if (buttonPressed(blue) == 0  && safty()) {
-//      startTime = millis();
-//      testBonnie();
-//    }
-//  }
+  //if (buttonPressed(blue) == 0  && safty()) {
+  //    delay(120);
+  //    if (buttonPressed(blue) == 0  && safty()) {
+  //      startTime = millis();
+  //      testBonnie();
+  //    }
+  //  }
 }
 
 
