@@ -46,7 +46,7 @@ void mLoop() {
       if (blue.read() == 0) {
         overRun = 0;
         blinkGreen(5, 70);
-        //EEPROM.update(0, overRun);
+        EEPROM.update(0, overRun);
       }
     }
 
