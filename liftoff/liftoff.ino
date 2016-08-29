@@ -1,3 +1,6 @@
+#include <Debounce.h>
+#include <PinDebouncer.h>
+
 //Author Tor
 
 //Die beiden Taster green und red starten die funktionen up und down.
@@ -36,9 +39,9 @@
 #define P3          27
 #define P4          28
 
-#define green       30
-#define red         31
-#define blue        32
+#define T1          30
+#define T2          31
+#define T3          32
 
 
 #define S1          36
@@ -46,12 +49,22 @@
 
 #define N1          40
 
+PinDebouncer p1(P1,10);
+PinDebouncer p2A(P2A, 10);
+PinDebouncer p2B(P2B, 10);
+PinDebouncer p3(P3, 10);
+PinDebouncer p4(P4,10);
 
-#define buttonPressed(a) (digitalRead(a))
-#define signalRead(a) (digitalRead(a))
+PinDebouncer green(T1, 10);
+PinDebouncer red(T2, 10);
+PinDebouncer blue(T3, 10);
+
+PinDebouncer s1(S1, 10);
+PinDebouncer s2(S2, 10);
+
+PinDebouncer n1(N1, 40);
 
 char data = ' '; //Serieller char
-
 
 //Timervariablen
 int startTime =    0;
@@ -59,8 +72,14 @@ int currentTime =  0;
 int saftyStauts =  0;
 int counter = EEPROM.read(0);
 byte overRun = EEPROM.read(1); //Error durch Zeitausloesung
-byte P4activated = 0;
 
+byte p4activated = 1; //Nehme bei boot an dass keine Kiste im Turm 2 ist
+void p4event(enum DebounceEdgeType edge)
+{
+  if (edge == FallingEdge) {
+    p4activated = 1;
+  }
+}
 
 void setup() {
 
@@ -84,9 +103,9 @@ void setup() {
   pinMode(P3,       INPUT); //Signal unten
   pinMode(P4,       INPUT); //Signal Turm 2
 
-  pinMode(green,    INPUT); //Taster gruen
-  pinMode(red,      INPUT); //Taster rot
-  pinMode(blue,     INPUT); //Taster blau
+  pinMode(T1,       INPUT); //Taster gruen
+  pinMode(T2,       INPUT); //Taster rot
+  pinMode(T3,       INPUT); //Taster blau
 
   pinMode(S1,       INPUT); //Klappe oben
   pinMode(S2,       INPUT); //Klappe unten
@@ -116,9 +135,9 @@ void setup() {
   digitalWrite(P3,        HIGH);
   digitalWrite(P4,        HIGH);
 
-  digitalWrite(green,     HIGH);
-  digitalWrite(red,       HIGH);
-  digitalWrite(blue,      HIGH);
+  digitalWrite(T1,        HIGH);
+  digitalWrite(T2,        HIGH);
+  digitalWrite(T3,        HIGH);
 
   digitalWrite(S1,        HIGH);
   digitalWrite(S2,        HIGH);
@@ -126,6 +145,13 @@ void setup() {
 
   digitalWrite(ledR,      LOW);
   digitalWrite(ledG,      LOW);
+
+  // Only start debouncer after inputs have been configured
+  Debounce::start();
+  // Wait for debouncer to settle
+  delay(50);
+  // Register p4activated handler
+  p4.setHandler(p4event);
 
   //Start sequenz
   printSensor();
@@ -135,7 +161,7 @@ void setup() {
   //Nachdem das System gestartet wurde, blinkt die rote LED 5 mal.
   //Wird green und red gedrueckt, bevor die gruene LED blinkt, startet der Manuelle modus "mLoop()"
   //er kann nur durch neustart verlassen werden
-  if ((buttonPressed(green) == 0) &&  buttonPressed(red) == 0) {
+  if (green.read() == 0 && red.read() == 0) {
     digitalWrite(ledR,    HIGH);
     digitalWrite(ledG,    HIGH);
     delay(1200);
@@ -149,46 +175,41 @@ void setup() {
 void loop() {
   //Die klappen werden immer ueberwacht
   safty();
-  bufferInputs();
-  if (P4state == 0) {
-     P4activated = 1;
-  }
 
-  
   //fahert von unten nach oben entlaed und fahert wieder runter
-  if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
+  if (green.read() == 0 && safty()) {
     delay(120); // Knopf muss xms gedrückt sein
-    if (buttonPressed(green) == 0 && signalRead(P4) == 1 && safty()) {
+    if (green.read() == 0 && p4.read() == 1 && p4activated == 1 && safty()) {
       startTime = millis(); //Laufzeit berechnung
       bring(16000);
       delay(3000); // Kiste rutscht vom Aufzug -- hoffentlich!
       startTime = millis(); //time reset
       back(16000);
-    } else if (signalRead(P4) == 0) {
+    } else if (p4.read() != 1 || p4activated != 1) {
       blinkGreen(4 , 150); //zeigt an, dass eine Kiste oben entladen werden muss.
     }
   }
 
   //fahert so lange nach unten wie es geht
-  if (buttonPressed(red) == 0  && safty()) {
+  if (red.read() == 0  && safty()) {
     delay(120);
-    if (buttonPressed(red) == 0  && safty()) {
+    if (red.read() == 0  && safty()) {
       startTime = millis();
       back(16000);
     }
   }
   //  //fahert von der mitte nach unten oder von unten in die mitte
-  //  if (buttonPressed(blue) == 0  && safty()) {
+  //  if (blue.read() == 0  && safty()) {
   //    delay(120);
-  //    if (buttonPressed(blue) == 0  && safty()) {
+  //    if (blue.read() == 0  && safty()) {
   //      startTime = millis();
   //      bonnie();
   //    }
   //  }
   //Test
-  //if (buttonPressed(blue) == 0  && safty()) {
+  //if (blue.read() == 0  && safty()) {
   //    delay(120);
-  //    if (buttonPressed(blue) == 0  && safty()) {
+  //    if (blue.read() == 0  && safty()) {
   //      startTime = millis();
   //      testBonnie();
   //    }
@@ -200,29 +221,39 @@ void loop() {
 void printSensor() {
   Serial.println("Signale");
   Serial.print("P1: ");
-  Serial.println(signalRead(P1));
+  Serial.println(digitalRead(P1));
+  Serial.println(p1.read());
   Serial.print("P2A: ");
-  Serial.println(signalRead(P2A));
+  Serial.println(digitalRead(P2A));
+  Serial.println(p2A.read());
   Serial.print("P2B: ");
-  Serial.println(signalRead(P2B));
+  Serial.println(digitalRead(P2B));
+  Serial.println(p2B.read());
   Serial.print("P3: ");
-  Serial.println(signalRead(P3));
+  Serial.println(digitalRead(P3));
+  Serial.println(p3.read());
   Serial.print("P4: ");
-  Serial.println(signalRead(P4));
+  Serial.println(digitalRead(P4));
+  Serial.println(p4.read());
   Serial.println(" ");
   Serial.println("Taster");
   Serial.print("green: ");
-  Serial.println(buttonPressed(green));
+  Serial.println(digitalRead(T1));
+  Serial.println(green.read());
   Serial.print("red: ");
-  Serial.println(buttonPressed(red));
+  Serial.println(digitalRead(T2));
+  Serial.println(red.read());
   Serial.print("blue: ");
-  Serial.println(buttonPressed(blue));
+  Serial.println(digitalRead(T3));
+  Serial.println(blue.read());
   Serial.println(" ");
   Serial.println("Klappen");
   Serial.print("S1: ");
-  Serial.println(signalRead(S1));
+  Serial.println(digitalRead(S1));
+  Serial.println(s1.read());
   Serial.print("S2: ");
-  Serial.println(signalRead(S2));
+  Serial.println(digitalRead(S2));
+  Serial.println(s2.read());
   Serial.println(" ");
   Serial.print("Fehlerspeicher: ");
   Serial.println(EEPROM.read(1));

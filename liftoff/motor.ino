@@ -1,7 +1,7 @@
 //Motorenbefehle
 //goUp und goDown
 void goUp() {
-  if (signalRead(P1)  != 1) {
+  if (digitalRead(P1)  != 1) { // Hier ist mir die entprellte variante gerade zu riskant falls was damit nicht geht :3
     digitalWrite(L1,      LOW);
     digitalWrite(L2,      LOW);
     digitalWrite(up,      LOW);
@@ -14,7 +14,7 @@ void goUp() {
 }
 // L1 L2 aendern
 void goDown() {  
-  if (signalRead(P3) != 1) {
+  if (digitalRead(P3) != 1) { // Hier ist mir die entprellte variante gerade zu riskant falls was damit nicht geht :3
     digitalWrite(L1,      LOW);
     digitalWrite(L2,      LOW);
     digitalWrite(down,    LOW);

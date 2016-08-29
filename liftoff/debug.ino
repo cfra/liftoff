@@ -26,27 +26,27 @@ void mLoop() {
     Serial.flush(); //seriellen Puffer löschen
 
     //gruen faehrt hoch
-    if ((buttonPressed(green) == 0) && (signalRead(P1) == 0)) {
-      while ((buttonPressed(green) == 0) && (signalRead(P1) == 0)) {
+    if ((green.read() == 0) && (p1.read() == 0)) {
+      while ((green.read() == 0) && (p1.read() == 0)) {
         goUp();
       }
       off();
     }
     //rot runter
-    if ((buttonPressed(red) == 0) && (signalRead(P3) == 0)) {
-      while ((buttonPressed(red) == 0) && (signalRead(P3) == 0)) {
+    if ((red.read() == 0) && (p3.read() == 0)) {
+      while ((red.read() == 0) && (p3.read() == 0)) {
         goDown();
       }
       off();
     }
 
     //blue und red resetten den Errorspeicher
-    if (buttonPressed(blue) == 0) {
+    if (blue.read() == 0) {
       delay(400);
-      if (buttonPressed(blue) == 0) {
+      if (blue.read() == 0) {
         overRun = 0;
         blinkGreen(5, 70);
-        EEPROM.update(0, overRun);
+        //EEPROM.update(0, overRun);
       }
     }
 
@@ -54,6 +54,4 @@ void mLoop() {
     digitalWrite(ledR, HIGH);
 
   }
-
-
 }

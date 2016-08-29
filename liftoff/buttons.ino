@@ -1,16 +1,15 @@
 //Aktiviert durch green, bringt der Aufzug eine Kiste BIER nach oben, nahc der entladung (3 sekunden spaeter) begibt der Aufzug sich in den Keller
 void bring(int x) {
-  if (P4state == 0) {
+  if (p4.read() == 0) {
     blinkGreen(3, 200); ////
   }
   else {
     currentTime = millis() - startTime;
-    while (P1state == 0 && P4state == 1 &&
+    while (p1.read() == 0 && p4.read() == 1 &&
            safty() && maxRunTime(x)) {
-      bufferInputs();
       goUp();
     }
-    P4activated = 0;
+    p4activated = 0;
   }
   off();
 }
@@ -18,11 +17,7 @@ void bring(int x) {
 //Aktiviert durch red faehrt den Aufzug nach unten zu P3
 void back(int x) {
   currentTime = millis() - startTime;
-  while (digitalRead(P3) == 0 && safty() && maxRunTime(x) ) {
-    bufferInputs();
-    if (P4state == 0) {
-      P4activated = 1;
-    }
+  while (p3.read() == 0 && safty() && maxRunTime(x) ) {
     goDown();
   }
   off();
@@ -35,7 +30,7 @@ void bonnie() {
     digitalWrite(Lock, HIGH); // Magnetschkoss verriegeln
     back(8000);
   }
-  else if (isMid() == false && digitalRead(P3) == 1 && safty()) {
+  else if (isMid() == false && p3.read() == 1 && safty()) {
     my(8000);
   }
   //Falls er ueber P2 steht
@@ -47,7 +42,7 @@ void bonnie() {
 
 //Funktion von bonnie
 void my(int x) {
-  while (isMid() == false && signalRead(P1) == 0 &&
+  while (isMid() == false && p1.read() == 0 &&
          safty() && maxRunTime(x)) {
     currentTime = millis() - startTime;
     goUp();
@@ -63,12 +58,10 @@ void testBonnie() {
   isMid();
   bring(9000);
   delay(3000);
-  while (isMid() == false && digitalRead(P3) == 0 &&
+  while (isMid() == false && p3.read() == 0 &&
          safty()) {
     goDown();
   }
   off();
   isMid();
 }
-
-
